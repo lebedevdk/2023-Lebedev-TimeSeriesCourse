@@ -55,3 +55,16 @@ def sliding_window(ts, window, step=1):
         subs_matrix[i] = ts[start_idx:end_idx]
 
     return subs_matrix
+
+
+def random_walk(length):
+    import random
+    
+    y = 0
+    positions = [0]
+    
+    for _ in range(length):
+        y += random.choice([-1, 1])
+        positions.append(y)
+        
+    return np.array(positions)
