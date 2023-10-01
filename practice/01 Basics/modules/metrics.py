@@ -77,24 +77,55 @@ def DTW_distance(ts1, ts2, r=None):
         DTW distance between ts1 and ts2.
     """
 
-    # Инициализация матрицы расстояний
     n = len(ts1)
     m = len(ts2)
-    dtw_matrix = np.zeros((n+1, m+1))
 
-    # Заполнение первой строки и первого столбца бесконечными значениями
-    dtw_matrix[0, :] = np.inf
-    dtw_matrix[:, 0] = np.inf
+    # Матрица расстояний
+    dtw_matrix = np.zeros((n+1, m+1))
+    dtw_matrix[:, :] = np.inf
     dtw_matrix[0, 0] = 0
 
     # Вычисление DTW меры
     for i in range(1, n+1):
-        for j in range(max(1, round(i-m*r)), min(m+1, round(i+m*r)+1)):
+        for j in range(max(1, i-int(np.floor(m*r))), min(m, i+int(np.floor(m*r))) + 1):
             cost = np.square(ts1[i-1] - ts2[j-1])
             dtw_matrix[i, j] = cost + \
-                min(dtw_matrix[i-1, j], dtw_matrix[i, j-1],
+                min(dtw_matrix[i-1, j],
+                    dtw_matrix[i, j-1],
                     dtw_matrix[i-1, j-1])
 
     dtw_dist = dtw_matrix[n, m]
 
-    return dtw_dist, dtw_matrix
+    return dtw_dist
+
+
+def calculate_distance_matrix(data, metric='euclidean', normalize=True):
+
+    N = data.shape[0] # number of time series
+    
+    if metric=='euclidean':
+        if normalize:
+            dist_func = norm_ED_distance
+        else:
+            dist_func = ED_distance
+    elif metric=='dtw':
+        if normalize:
+            for i in range(N):
+                data[i] = z_normalize(data[i])
+        dist_func = DTW_distance
+    else:
+        raise ValueError("Metric must be 'euclidean' or 'dtw'.")
+
+    # Initialize the distance matrix
+    distance_matrix = np.zeros(shape=(N, N))
+    
+    for i in range(N):
+        for j in range(i, N):
+            if i == j:
+                distance_matrix[i, j] = 0.0
+            else:
+                distance_matrix[i, j] = dist_func(data[i], data[j])
+    
+    distance_matrix = distance_matrix + distance_matrix.T
+
+    return distance_matrix
