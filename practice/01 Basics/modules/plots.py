@@ -110,5 +110,5 @@ def plot2d(x, y, plot_title, x_title, y_title):
                       paper_bgcolor='rgba(0,0,0,0)',
                       width=700)
 
-    fig.show(renderer="colab")
-
+    # fig.show(renderer="colab")
+    fig.show()
