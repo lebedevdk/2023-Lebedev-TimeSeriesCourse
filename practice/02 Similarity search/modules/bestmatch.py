@@ -42,6 +42,7 @@ class BestMatchFinder:
         self.top_k = top_k
         self.normalize = normalize
         self.r = r
+        self.bestmatch = {}
 
 
     def _apply_exclusion_zone(self, a, idx, excl_zone):
@@ -150,7 +151,29 @@ class NaiveBestMatchFinder(BestMatchFinder):
         else:
             excl_zone = int(np.ceil(m / self.excl_zone_denom))
         
-        # INSERT YOUR CODE
+        distances = []
+        # self._top_k_match(distances, m, bsf, excl_zone)
+
+        # self.bestmatch = self._top_k_match(np.full(N, np.inf), m, bsf, excl_zone)
+        
+        for subseq_idx in range(N):
+            subseq = self.ts_data[subseq_idx]
+            
+            if self.normalize:
+                subseq = z_normalize(subseq)
+            
+            dist = DTW_distance(subseq, self.query, self.r)
+            distances.append(dist)
+            
+            # if dist < bsf:
+            #     bsf = dist
+            #     self.bestmatch = self._top_k_match(np.full(N, np.inf), m, bsf, excl_zone)
+            #     print(self.bestmatch)
+            
+            # best_match_results['index'].append(subseq_idx)
+            # best_match_results['distance'].append(dist)
+
+        self.bestmatch = self._top_k_match(distances, m, bsf, excl_zone)
 
         return self.bestmatch
 
