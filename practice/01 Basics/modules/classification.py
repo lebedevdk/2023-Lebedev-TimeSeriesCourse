@@ -105,7 +105,7 @@ class TimeSeriesKNN:
         neighbors = []
         for i, x_train in enumerate(self.X_train):
             neighbors.append((self._distance(x_train, x_test), self.Y_train[i]))
-        neighbors = sorted(neighbors, key=lambda x: x[0], reverse=True)[:self.n_neighbors]
+        neighbors = sorted(neighbors, key=lambda x: x[0])[:self.n_neighbors]
 
         return neighbors
 
