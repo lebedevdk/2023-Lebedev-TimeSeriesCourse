@@ -257,6 +257,9 @@ class UCR_DTW(BestMatchFinder):
         self.lb_Kim_num = 0
         self.lb_KeoghQC_num = 0
         self.lb_KeoghCQ_num = 0
+
+        if self.normalize:
+            self.query = z_normalize(self.query)
         
 
         distances = []
@@ -266,8 +269,6 @@ class UCR_DTW(BestMatchFinder):
             
             if self.normalize:
                 subseq = z_normalize(subseq)
-                self.query = z_normalize(self.query)
-
 
             if self._LB_Kim(self.query, subseq) > bsf:
                 self.lb_Kim_num += 1
